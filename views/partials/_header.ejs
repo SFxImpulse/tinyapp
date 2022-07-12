@@ -8,14 +8,26 @@
       data-target="#navbarNavAltMarkup"
       aria-controls="navbarNavAltMarkup"
       aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+      aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav w-50">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+      </div>
+      <div class="w-50" style="display: flex; justify-content: flex-end;">
+        <% if (username) { %>
+          <form method="POST" action="/logout">
+            <%= username %>
+            <button type="submit" class="btn btn-outline-secondary">Logout</button>
+          </form>
+       <% } else { %>
+        <form method="POST" action="/login" class="form-inline">
+          <input class="form-control mr-2" type="text" name="username" placeholder="Username">
+          <button type="submit" class="btn btn-outline-secondary">Login</button>
+        </form>
+        <% } %>
       </div>
     </div>
   </nav>
