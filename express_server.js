@@ -44,19 +44,18 @@ const emailRetriever = email => {
   return null;
 };
 
+const passwordRetriever = password => {
+  for (let user in users) {
+    if (password === users[user].password) {
+      return users[user];
+    }
+  }
+  return null;
+};
+
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, user: req.cookies["user"] };
   res.render("urls_index", templateVars);
-});
-
-app.get('/login', (req, res) => {
-  const templateVars = { user: req.cookies["user"] };
-  res.render("urls_login", templateVars);
-})
-
-app.post('/login', (req, res) => {
-  res.cookie("user_id", req.body.user_id);
-  res.redirect("/urls");
 });
 
 app.get('/register', (req, res) => {
@@ -65,8 +64,6 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => { // setting up the users object
-  console.log(req.body);
-  console.log(users);
   if (!req.body.email|| !req.body.password) {
     return res.send("Error 400: Email or Password is undefined. Please enter a valid email address and password and try again.");
   } else if (emailRetriever(req.body.email)) {
@@ -77,6 +74,33 @@ app.post('/register', (req, res) => { // setting up the users object
     res.cookie("user_id", users[randomUserID].id); // Here
     res.cookie("user", users[randomUserID]); // and here cookies to create after signing up
     return res.redirect('/urls');
+  }
+});
+
+app.get('/login', (req, res) => {
+  const templateVars = { user: req.cookies["user"] };
+  res.render("urls_login", templateVars);
+})
+
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  console.log(users);
+  if (!req.body.email || !req.body.password) {
+    return res.send("Error 400: Email or Password is undefined. Please enter a valid email address and password and try again.");
+  } else if (emailRetriever(req.body.email) === null) {
+    return res.send("Error 403: Login failed, Email is not registered.");
+  } else if (emailRetriever(req.body.email) && passwordRetriever(req.body.password) === null) {
+    return res.send("Error 403: Password is incorrect.")
+  } else {
+    for (let user in users) {
+      if (users[user].email === req.body.email) {
+        if (users[user].password === req.body.password) {
+          res.cookie("user", users[user]);
+          res.cookie("user_id", user);
+          res.redirect("/urls");
+        }
+      }
+    }
   }
 });
 
