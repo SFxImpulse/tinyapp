@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser'); // A parser that looks through co
 const bcrypt = require("bcryptjs"); // A hash creator that encrypts passwords.
 const salt = bcrypt.genSaltSync(10);
 const cookieSession = require("cookie-session");
-const { generateRandomString, emailRetriever, urlsForUser } = require("./helpers")
+const { generateRandomString, emailRetriever, urlsForUser } = require("./helpers");
 
 app.set("view engine", "ejs"); // Sets our template engine to .ejs files.
 app.use(express.urlencoded({ extended: true})); // Middleware to receieve request information.
@@ -32,7 +32,7 @@ app.get('/register', (req, res) => { // Registration page
 });
 
 app.post('/register', (req, res) => { // setting up the users object
-  if (!req.body.email|| !req.body.password) {
+  if (!req.body.email || !req.body.password) {
     return res.send("Error 400: Email or Password is undefined. Please enter a valid email address and password and try again.");
   } else if (emailRetriever(req.body.email, users)) {
     return res.send("Error 404: Email already registered.")
@@ -43,6 +43,10 @@ app.post('/register', (req, res) => { // setting up the users object
     req.session.user =  users[randomUserID]; // and here are cookies to create after registering.
     return res.redirect('/urls');
   }
+});
+
+app.get("/", (req, res) => { // Home page will take you to the login page.
+  return res.redirect("/login");
 });
 
 app.get('/login', (req, res) => { // Login page
