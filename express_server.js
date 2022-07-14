@@ -24,12 +24,12 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: bcrypt.hashSync("purple-monkey-dinosaur", salt),
+    password: "purple-monkey-dinosaur",
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: bcrypt.hashSync("dishwasher-funk", salt),
+    password: bcrypt.compareSync("dishwasher-funk", salt),
   },
 };
 
@@ -86,7 +86,8 @@ app.post('/register', (req, res) => { // setting up the users object
     return res.send("Error 404: Email already registered.")
   } else if (emailRetriever(req.body.email) === null) {
     const randomUserID = generateRandomString(); // this is the user ID
-    users[randomUserID] = { id: randomUserID, email: req.body.email, password: req.body.password }; // What is being added to the object
+    users[randomUserID] = { id: randomUserID, email: req.body.email, password: bcrypt.hashSync(req.body.password, salt) }; // What is being added to the object
+    console.log(users[randomUserID]);
     res.cookie("user_id", users[randomUserID].id); // Here
     res.cookie("user", users[randomUserID]); // and here cookies to create after signing up
     return res.redirect('/urls');
@@ -104,20 +105,18 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.send("Error 400: Email or Password is undefined. Please enter a valid email address and password and try again.");
-  } else if (emailRetriever(req.body.email) === null) {
-    return res.send("Error 403: Login failed, Email is not registered.");
-  } else if (emailRetriever(req.body.email) && passwordRetriever(req.body.password) === null) {
-    return res.send("Error 403: Password is incorrect.")
+  } 
+  const user = emailRetriever(req.body.email);
+  if (user) {
+    const password = user.password;
+    if (!bcrypt.compareSync(req.body.password, password)) {
+      return res.send("Error 403: Password is incorrect.")
+    } 
+    res.cookie("user", user);
+    res.cookie("user_id", user.id);
+    return res.redirect("/urls");
   } else {
-    for (let user in users) {
-      if (users[user].email === req.body.email) {
-        if (users[user].password === req.body.password) {
-          res.cookie("user", users[user]);
-          res.cookie("user_id", user);
-          return res.redirect("/urls");
-        }
-      }
-    }
+    return res.send("Error 403: Login failed, Email is not registered.");
   }
 });
 
@@ -129,11 +128,9 @@ app.post('/logout', (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlsForUser(req.cookies["user_id"]), user: req.cookies["user"] };
-  console.log(urlsForUser(req.cookies["user_id"]));
   if (!templateVars.user) {
     return res.send("Please login before viewing your URLs.");
   }
-
   return res.render("urls_index", templateVars);
 });
 
@@ -179,9 +176,10 @@ app.post('/urls/:id', (req, res) => { // Edits URLs
   } else if (!urlsForCurrentUser[req.params.id]) {
     return res.send("Use the correct user please, these are not your URLS.")
   } else if (urlsForCurrentUser[req.params.id]) {
-  const shortURL = req.params.id;
-  const longURL = req.body.longURL;
-  urlDatabase[shortURL] = { longURL, userID: req.cookies['user'] };
+    console.log(req.params.id);
+    console.log("Before editing", urlDatabase);
+  urlDatabase[req.params.id] = { longURL: req.body.longURL, userID: req.cookies['user_id'] };
+  console.log("After editing", urlDatabase);
   return res.redirect(`/urls`);
   }
 });
@@ -201,7 +199,7 @@ app.post("/urls/:id/delete", (req, res) => { // Deletes URLs
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
   return res.redirect(longURL);
 });
 
