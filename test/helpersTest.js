@@ -19,11 +19,11 @@ describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = emailRetriever("user2@example.com", testUsers)
     const expectedUserID = {
-      id: "userRandomID", 
-      email: "user@example.com", 
-      password: "purple-monkey-dinosaur"
+      id: "user2RandomID", 
+      email: "user2@example.com", 
+      password: "dishwasher-funk"
     }
     console.log(user)
-    // assert.isTrue(user, expectedUserID);
+    assert.deepEqual(user, expectedUserID);
   });
 });
