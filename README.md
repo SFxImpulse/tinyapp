@@ -1,25 +1,29 @@
-# Lotide
+# TinyApp Project
 
-A mini clone of the [Lodash](https://lodash.com) library.
+TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
-## Purpose
+## Final Product
 
-**_BEWARE:_ This library was published for learning purposes. It is _not_ intended for use in production-grade software.**
+### Unique and shortened URLs for your favourite websites!
 
-This project was created and published by me (David) as part of my learnings at Lighthouse Labs. 
+Register and login to create and save the URLs of your favourite websites! Save them to your profile and use them whenever you want!
 
-## Usage
+!["This is the main URL page! This is where all your URLs are stored."](https://github.com/SFxImpulse/tinyapp/blob/main/screenshots/screenshot1.png)
 
-**Install it:**
+### Edit your URLs!
 
-`npm install @arctic_david/lotide`
+Edit your original URLs to keep the same shortened URL for a different website!
 
-**Require it:**
+!["This is the edit page, where you can edit the Longer URLs and keep the same shortened URL!"](https://github.com/SFxImpulse/tinyapp/blob/main/screenshots/screenshot2.png)
+## Dependencies
 
-`const _ = require('@arctic_david/lotide');`
+- Node.js
+- Express
+- EJS
+- bcryptjs
+- cookie-session
 
-**Call it:**
+## Getting Started
 
-`const results = _.tail([1, 2, 3]) // => [2, 3]`
-
-## Documentation
+- Install all dependencies (using the `npm install` command).
+- Run the development web server using the `node express_server.js` command.
