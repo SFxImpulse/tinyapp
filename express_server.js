@@ -76,13 +76,14 @@ app.post('/login', (req, res) => { // Logging in to an existing user.
 app.post('/logout', (req, res) => {
   req.session.user = null;
   req.session.user_id = null;
+  req.session = null;
   res.redirect("/login");
 });
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: req.session.user };
   if (!templateVars.user) {
-    return res.send("Please login before viewing your URLs.");
+    res.send("Please login before viewing your URLs.");
   }
   return res.render("urls_index", templateVars);
 });
