@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs"); // A hash creator that encrypts passwords.
 const salt = bcrypt.genSaltSync(10);
 const cookieSession = require("cookie-session");
 const { generateRandomString, emailRetriever, urlsForUser } = require("./helpers");
+const { urlDatabase, users } = require("./userData"); 
 
 app.set("view engine", "ejs"); // Sets our template engine to .ejs files.
 app.use(express.urlencoded({ extended: true})); // Middleware to receieve request information.
@@ -14,12 +15,6 @@ app.use(cookieSession({
 
   maxAge: 24 * 60 * 60 * 1000
 })); // Allows Encrypted cookie sessions to be created for different user visits.
-
-const urlDatabase = { // Database of shortened URLs with their accompanying longURLs and the users who own them.
-};
-
-const users = { // Database of users and user information.
-};
 
 app.get('/register', (req, res) => { // Registration page
   const templateVars = { user: req.session.user_id };
