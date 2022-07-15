@@ -149,6 +149,9 @@ app.post("/urls/:id/delete", (req, res) => { // Deletes URLs
 });
 
 app.get("/u/:id", (req, res) => {
+  if (!urlDatabase[req.params.id]) {
+    return res.send("Error 404: Shortened URL not found. Please enter a valid shortened URL.")
+  }
   const longURL = urlDatabase[req.params.id].longURL;
   return res.redirect(longURL);
 });
