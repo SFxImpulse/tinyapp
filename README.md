@@ -22,8 +22,9 @@ Edit your original URLs to keep the same shortened URL for a different website!
 - EJS
 - bcryptjs
 - cookie-session
+- Nodemon(with the developer dependency)
 
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
-- Run the development web server using the `node express_server.js` command.
+- Run the development web server using the `npm start` command.
